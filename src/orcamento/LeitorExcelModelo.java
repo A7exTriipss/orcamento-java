@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class LeitorExcelModelo {
     public static void main(String[] args) {
-        String caminhoArquivo = "orçamento.xlsx"; // Renomeie para o nome do seu arquivo
+        String caminhoArquivo = "orcamento.xlsx"; // Renomeie para o nome do seu arquivo
 
         try (FileInputStream fis = new FileInputStream(caminhoArquivo);
              Workbook workbook = new XSSFWorkbook(fis)) {

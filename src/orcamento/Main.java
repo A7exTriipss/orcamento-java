@@ -41,6 +41,12 @@ public class Main {
 		ExportadorTxt.exportarOrcamento(orcamento1, orcamento1.getNomeDoOrcamento() + ".txt");
 		ExportadorExcel.exportarOrcamento(orcamento1, orcamento1.getNomeDoOrcamento() + ".xlsx");
 		
+		//Preenchedor do Excel Modelo
+		
+		
+		EscritorExcelModelo escritor = new EscritorExcelModelo();
+		escritor.preencher(orcamento1, "orcamento.xlsx", "orcamento" + orcamento1.getCliente().getNome() + ".xlsx");
+		
 	}
 
 }
