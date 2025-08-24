@@ -1,0 +1,35 @@
+# ==== COMPILAÇÃO ====
+/bin/
+/out/
+/target/
+*.class
+
+# ==== LOGS E TEMPORÁRIOS ====
+*.log
+*.tmp
+*.swp
+*~
+
+# ==== ARQUIVOS DE IDE ====
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# ==== SISTEMA OPERACIONAL ====
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+
+libs/*.jar
