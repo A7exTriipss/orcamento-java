@@ -19,12 +19,34 @@ public class EscritorExcelModelo {
 			sheet.getRow(16).getCell(1).setCellValue(orcamento.getCliente().getTelefone());
 			sheet.getRow(16).getCell(5).setCellValue(orcamento.getCliente().getEmail());
 			
+			
+			
+			
 			//Preencher Serviços
 			
 			int linhaInicialServico = 22;
-			
+			int maximoServicosModelo = 2;
+			int linhaFinalModelo = linhaInicialServico + maximoServicosModelo -1;
 			List<Servico> servicos = orcamento.getServicos();
+			
+			// Antes de preencher, empurra a linha do total
+			EmpurrarLinhasParaBaixo.empurraLinhasParaBaixo(sheet, linhaInicialServico, servicos.size(), 24, 42);
+			
+			
+			
+			
+			
+			int LinhaAtual = linhaInicialServico;
 			for(int i = 0 ; i < servicos.size() ; i++) {
+				
+				if (LinhaAtual > linhaFinalModelo) {
+					//criar nova linha copiando a última linha do modelo
+					AdicionarLinhas.copiarUltimaLinha(sheet, linhaFinalModelo, LinhaAtual);
+					
+				}
+					
+				
+				
 				Servico s = servicos.get(i);
 				Row linha = sheet.getRow(linhaInicialServico + i);
 				if (linha == null) {
@@ -34,13 +56,13 @@ public class EscritorExcelModelo {
 				
 				linha.getCell(0).setCellValue(s.getDescricao());
 				
-				
+				LinhaAtual++;
 			}
 
 			
 			//Preencher Total
 			
-			sheet.getRow(33).getCell(8).setCellValue(orcamento.getTotalFinal());
+			sheet.getRow(22 + servicos.size()).getCell(8).setCellValue(orcamento.getTotalFinal());
 			
 			try(FileOutputStream fos = new FileOutputStream(caminhoSaida)){
 				workbook.write(fos);
