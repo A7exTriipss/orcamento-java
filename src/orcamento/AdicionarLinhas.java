@@ -3,88 +3,53 @@
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Workbook;
 
 public class AdicionarLinhas{
 	
-	public static void copiarUltimaLinha(Sheet sheet, int sourceRowNum, int destinationRowNum) {
+	private final Sheet sheet;
+	
+	public AdicionarLinhas(Sheet sheet) {
+		this.sheet = sheet;
+	}
+	
+	/** 
+	 * Copia a linha de referencia para uma posição especifica, empurrando linhas abaixo se necessá
+	 * @param linhaReferencia índice da linha de referencia
+	 * @param destino índice da linha de destino
+	 * @return a nova Row criada
+	 */
+	
+	public Row copiarLinhaParaPosicao(int linhaReferencia, int destino) {
 		
-		Row sourceRow = sheet.getRow(sourceRowNum);
-		Row newRow = sheet.getRow(destinationRowNum);
+		Row linhaReferenciaRow = sheet.getRow(linhaReferencia);
+		Row novaLinha = sheet.createRow(destino);
 		
+		Workbook workbook = sheet.getWorkbook();
 		
-		// Copiar a altura 
-		if (newRow == null) {
-		    newRow = sheet.createRow(destinationRowNum);
-		}
+		//Copiar altura
 		
-		newRow.setHeight(sourceRow.getHeight());
+		UtilExcel.copiarAltura(linhaReferenciaRow, novaLinha);
 		
+		//Copiar células
 		
-		// Copiar Celulas
-		
-		
-		for (int i = 0; i < sourceRow.getLastCellNum(); i++) {
+		for(int i = 0; i < linhaReferenciaRow.getLastCellNum(); i++) {
 			
-			Cell oldCell = sourceRow.getCell(i);
-			Cell newCell = newRow.createCell(i);
+			Cell sourceCell = linhaReferenciaRow.getCell(i);
+			Cell targetCell = novaLinha.createCell(i);
 			
-			
-			// Copiar estilo
-			
-			newCell.setCellStyle(oldCell.getCellStyle());
-			
-			
-			// Copiar valor ou formula
-			
-			
-			switch (oldCell.getCellType()) {
-			case STRING:
-				newCell.setCellValue(oldCell.getStringCellValue());
-				break;
-			case NUMERIC:
-				newCell.setCellValue(oldCell.getNumericCellValue());
-				break;
-			case BOOLEAN:
-				newCell.setCellValue(oldCell.getBooleanCellValue());
-				break;
-			case FORMULA:
-				newCell.setCellValue(oldCell.getCellFormula());
-				break;
-			default:
-				break;
-			
-			
-			
+			if(sourceCell != null) {
+				UtilExcel.copiarEstilo(workbook, sourceCell, targetCell);
+				UtilExcel.copiarValorOuFormula(sourceCell, targetCell);
 			}
 			
 		}
 		
-		// Copiar mesclagens, se houver
+		//Copiar mesclagens
 		
-		for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-            CellRangeAddress merged = sheet.getMergedRegion(i);
-            if (merged.getFirstRow() == sourceRowNum) {
-                CellRangeAddress newMerged = new CellRangeAddress(
-                        destinationRowNum,
-                        destinationRowNum + (merged.getLastRow() - merged.getFirstRow()),
-                        merged.getFirstColumn(),
-                        merged.getLastColumn()
-                );
-
-                boolean conflito = false;
-                for (int j = 0; j < sheet.getNumMergedRegions(); j++) {
-                    if (sheet.getMergedRegion(j).intersects(newMerged)) {
-                        conflito = true;
-                        break;
-                    }
-                }
-
-                if (!conflito) sheet.addMergedRegion(newMerged);
-            }
+		UtilExcel.copiarMesclagens(sheet, linhaReferencia, destino);
 		
-		}
+		return novaLinha;
 		
 	}
-
 }

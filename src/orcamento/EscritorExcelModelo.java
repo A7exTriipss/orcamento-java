@@ -26,43 +26,54 @@ public class EscritorExcelModelo {
 			
 			int linhaInicialServico = 22;
 			int maximoServicosModelo = 2;
-			int linhaFinalModelo = linhaInicialServico + maximoServicosModelo -1;
+			int linhaFinalServico = linhaInicialServico + maximoServicosModelo -1;
+			int linhaTotal = 24;
+			int linhaFimBloco = 42;
 			List<Servico> servicos = orcamento.getServicos();
 			
 			// Antes de preencher, empurra a linha do total
-			EmpurrarLinhasParaBaixo.empurraLinhasParaBaixo(sheet, linhaInicialServico, servicos.size(), 24, 42);
+			EmpurrarLinhasParaBaixo.empurraLinhasParaBaixo(sheet, linhaInicialServico, servicos.size(), linhaTotal, linhaFimBloco);
 			
 			
 			
+			//Criar/adicionar linhas de serviço extras usando AdicionarLinhas
 			
-			
-			int LinhaAtual = linhaInicialServico;
+			AdicionarLinhas adicionador = new AdicionarLinhas(sheet);
+			int linhaAtual = linhaInicialServico;
 			for(int i = 0 ; i < servicos.size() ; i++) {
 				
-				if (LinhaAtual > linhaFinalModelo) {
-					//criar nova linha copiando a última linha do modelo
-					AdicionarLinhas.copiarUltimaLinha(sheet, linhaFinalModelo, LinhaAtual);
+				//Se linhaAtual estiver além do modelo, criar nova linha copiando a última do modelo
+				if (linhaAtual > linhaFinalServico) {
+					adicionador.copiarLinhaParaPosicao(linhaFinalServico, linhaAtual);
 					
 				}
 					
 				
-				
+				//Preencher os dados do serviço
 				Servico s = servicos.get(i);
-				Row linha = sheet.getRow(linhaInicialServico + i);
+				Row linha = sheet.getRow(linhaAtual);
 				if (linha == null) {
-					linha = sheet.createRow(linhaInicialServico +i);
+					linha = sheet.createRow(linhaAtual);
 					
 				}
 				
 				linha.getCell(0).setCellValue(s.getDescricao());
 				
-				LinhaAtual++;
+				// Preencher QTD VALOR...
+				
+				linhaAtual++;
 			}
 
 			
 			//Preencher Total
 			
-			sheet.getRow(22 + servicos.size()).getCell(8).setCellValue(orcamento.getTotalFinal());
+			Row totalRow = sheet.getRow(linhaInicialServico + servicos.size());
+			
+			if(totalRow == null) {
+				totalRow = sheet.createRow(linhaInicialServico + servicos.size());	
+			}
+			totalRow.getCell(8).setCellValue(orcamento.getTotalFinal());
+			
 			
 			try(FileOutputStream fos = new FileOutputStream(caminhoSaida)){
 				workbook.write(fos);
