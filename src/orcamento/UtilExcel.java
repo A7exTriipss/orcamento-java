@@ -93,7 +93,67 @@ public class UtilExcel {
 		targetRow.setHeight(sourceRow.getHeight());
 	}
 	
+	/* Copiar uma linha inteira (células + estilos) */
+	public static void copiarLinha(Sheet sheet, Row sourceRow, Row targetRow) {
+		Workbook workbook = sheet.getWorkbook();
+		if(sourceRow == null || targetRow == null) {
+			return;
+		}
+		
+		for(int i = sourceRow.getFirstCellNum(); i < sourceRow.getLastCellNum(); i++) {
+			Cell sourceCell = sourceRow.getCell(i);
+			Cell targetCell = targetRow.createCell(i);
+			
+			if(sourceCell != null) {
+				/* Copiar estilo*/
+				copiarEstilo(workbook, sourceCell, targetCell);
+				
+				/*Copiar valor ou formula*/
+				copiarValorOuFormula(sourceCell, targetCell);
+			}
+			
+			
+		}
+		
+		/* Copiar mesclagem*/
+		
+		copiarMesclagens(sheet, sourceRow.getRowNum(), targetRow.getRowNum());
+		
+	}
+	/* Copiar varias linhas a partir de uma linha de origem*/
 	
+	public static void copiarLinhasComEstilo(Sheet sheet, Row sourceRow, int quantidade) {
+		if(sourceRow == null || quantidade <= 0) {
+			return;
+		}
+		
+		int comeco = sourceRow.getRowNum() + 1;
+		for(int i = 0; i < quantidade; i++) {
+			Row novaLinha = sheet.createRow(comeco + i);
+			copiarLinha(sheet, sourceRow, novaLinha);
+			
+		}
+		
+	
+	}
+	
+	public static void copiarLinhasComEstiloNoMeio(Sheet sheet, Row sourceRow, int quantidade, Row inicioBlocoParaEmpurrar) {
+		if(quantidade <= 0 || sourceRow == null) {
+			return;
+		}
+		int comecoReferencia = sourceRow.getRowNum();
+		int comecoBloco = inicioBlocoParaEmpurrar.getRowNum();
+		/*Empurrar o bloco de linhas para baixo*/
+		
+		EmpurrarLinhasParaBaixo.empurraLinhasParaBaixo(sheet, comecoReferencia, quantidade, comecoBloco, sheet.getLastRowNum());
+		
+		
+		/*copia as linhas com estilo e valor*/
+		for(int i = 0; i < quantidade; i++) {
+			Row novaLinha = sheet.createRow(comecoReferencia + i);
+			copiarLinha(sheet,sourceRow, novaLinha);
+		}
+	}
 	
 	
 	

@@ -5,6 +5,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+
+
 public class AdicionarLinhas{
 	
 	private final Sheet sheet;
@@ -27,7 +29,11 @@ public class AdicionarLinhas{
 		
 		Workbook workbook = sheet.getWorkbook();
 		
-		//Copiar altura
+		/*Copiar linha com UtilExcel*/
+		
+		UtilExcel.copiarLinha(sheet, linhaReferenciaRow, novaLinha);
+		
+		/*Copiar altura
 		
 		UtilExcel.copiarAltura(linhaReferenciaRow, novaLinha);
 		
@@ -47,7 +53,7 @@ public class AdicionarLinhas{
 		
 		//Copiar mesclagens
 		
-		UtilExcel.copiarMesclagens(sheet, linhaReferencia, destino);
+		UtilExcel.copiarMesclagens(sheet, linhaReferencia, destino);*/
 		
 		return novaLinha;
 		
